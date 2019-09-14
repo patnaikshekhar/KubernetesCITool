@@ -1,0 +1,20 @@
+syntax = "proto3";
+package kci;
+
+service Kci {
+    rpc build (BuildRequest) returns (BuildResponse);
+}
+
+message BuildRequest {
+    string repository = 1;
+    repeated Step steps = 2;
+}
+
+message Step {
+    string image = 1;
+    repeated string args = 2;
+}
+
+message BuildResponse {
+    string update = 1;
+}

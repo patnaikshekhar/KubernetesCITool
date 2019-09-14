@@ -1,0 +1,4 @@
+repository: https://github.com/patnaikshekhar/KEDA-Redis-Sample
+steps:
+- image: golang:1.13.0-alpine3.10
+  args: ["go", "build"]
