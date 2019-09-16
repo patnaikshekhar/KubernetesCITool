@@ -49,5 +49,11 @@ func (s kciServer) Build(ctx context.Context, request *pb.BuildRequest) (
 		return nil, err
 	}
 
+	err = kube.GetLogs(s.clientset, podName)
+	if err != nil {
+		log.Printf("Error getting logs: %s", err.Error())
+		return nil, err
+	}
+
 	return &pb.BuildResponse{Update: podName}, nil
 }
