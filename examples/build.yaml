@@ -1,4 +1,8 @@
-repository: https://github.com/patnaikshekhar/KEDA-Redis-Sample
+repository: https://github.com/patnaikshekhar/KubernetesCIToolExample
 steps:
+- image: alpine
+  args: ["ls", "-ltr", "/workspace"]
+- image: golang:1.13.0-alpine3.10
+  args: ["go", "test"]
 - image: golang:1.13.0-alpine3.10
   args: ["go", "build"]
