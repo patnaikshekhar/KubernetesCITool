@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -40,20 +39,19 @@ type kciServer struct {
 	clientset *kubernetes.Clientset
 }
 
-func (s kciServer) Build(ctx context.Context, request *pb.BuildRequest) (
-	*pb.BuildResponse, error) {
+func (s kciServer) Build(request *pb.BuildRequest, stream pb.Kci_BuildServer) error {
 
 	podName, err := kube.CreatePod(s.clientset, request)
 	if err != nil {
 		log.Printf("Error with request : %s", err.Error())
-		return nil, err
+		return err
 	}
 
-	err = kube.GetLogs(s.clientset, podName)
+	err = kube.GetLogs(s.clientset, podName, stream)
 	if err != nil {
 		log.Printf("Error getting logs: %s", err.Error())
-		return nil, err
+		return err
 	}
 
-	return &pb.BuildResponse{Update: podName}, nil
+	return nil
 }

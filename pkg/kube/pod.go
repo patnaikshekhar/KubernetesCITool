@@ -93,7 +93,8 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 	return newPod.Name, nil
 }
 
-func GetLogs(clientset *kubernetes.Clientset, podName string) error {
+func GetLogs(clientset *kubernetes.Clientset,
+	podName string, stream pb.Kci_BuildServer) error {
 
 	// Get a list of steps
 	pod, err := clientset.CoreV1().Pods(kciNamespace).Get(podName,
@@ -102,10 +103,8 @@ func GetLogs(clientset *kubernetes.Clientset, podName string) error {
 		return err
 	}
 
-	noOfSteps := len(pod.Spec.InitContainers)
-	currentStep := 1
-
-	log.Printf("Running step %d of %d", currentStep, noOfSteps)
+	noOfSteps := int32(len(pod.Spec.InitContainers))
+	currentStep := int32(1)
 
 	for {
 		req := clientset.CoreV1().Pods(kciNamespace).GetLogs(podName,
@@ -131,13 +130,21 @@ func GetLogs(clientset *kubernetes.Clientset, podName string) error {
 			return err
 		}
 
-		fmt.Println(string(result))
+		err = stream.Send(&pb.BuildResponse{
+			Status: "In Progress",
+			Data:   string(result),
+			Step:   currentStep,
+		})
+		if err != nil {
+			return err
+		}
 
 		// Check if container failed
 		pod, err := clientset.CoreV1().Pods(kciNamespace).Get(
 			podName, metav1.GetOptions{})
 
-		if pod.Status.Phase == corev1.PodFailed {
+		if pod.Status.InitContainerStatuses[currentStep-1].
+			State.Terminated.Reason == "Error" {
 			return fmt.Errorf("Build failed")
 		}
 
@@ -145,7 +152,6 @@ func GetLogs(clientset *kubernetes.Clientset, podName string) error {
 		if currentStep > noOfSteps {
 			break
 		}
-		log.Printf("Running step %d of %d", currentStep, noOfSteps)
 	}
 
 	return nil

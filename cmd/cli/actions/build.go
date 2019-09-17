@@ -3,6 +3,7 @@ package actions
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 
@@ -55,12 +56,22 @@ func startBuild(request *pb.BuildRequest) error {
 
 	ctx := context.Background()
 
-	response, err := client.Build(ctx, request)
+	responseStream, err := client.Build(ctx, request)
 	if err != nil {
 		return err
 	}
 
-	log.Println(response)
+	for {
+		response, err := responseStream.Recv()
+		if err == io.EOF {
+			fmt.Println("Build Completed")
+			return nil
+		}
+		if err != nil {
+			return err
+		}
 
-	return nil
+		fmt.Printf("Running Step %d\n\n", response.Step)
+		fmt.Println(response.Data)
+	}
 }

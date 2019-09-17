@@ -2,7 +2,7 @@ syntax = "proto3";
 package kci;
 
 service Kci {
-    rpc build (BuildRequest) returns (BuildResponse);
+    rpc build (BuildRequest) returns (stream BuildResponse);
 }
 
 message BuildRequest {
@@ -16,5 +16,7 @@ message Step {
 }
 
 message BuildResponse {
-    string update = 1;
+    string status = 1;
+    int32 step = 2;
+    string data = 3;
 }
