@@ -4,5 +4,3 @@ steps:
   args: ["go", "test"]
 - image: golang:1.13.0-alpine3.10
   args: ["go", "build", "-o", "app"]
-- image: docker
-  args: ["build", "-t", "patnaikshekhar/randomimage:1", "."]
