@@ -52,6 +52,16 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			WorkingDir:   "/workspace",
 		}
 
+		if step.Image == "docker" {
+
+			buildStep.VolumeMounts = append(buildStep.VolumeMounts,
+				corev1.VolumeMount{
+					MountPath: "/var/run",
+					Name:      "docker-sock",
+				},
+			)
+		}
+
 		containers = append(containers, buildStep)
 	}
 
@@ -78,6 +88,14 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 						EmptyDir: &corev1.EmptyDirVolumeSource{},
 					},
 				},
+				corev1.Volume{
+					Name: "docker-sock",
+					VolumeSource: corev1.VolumeSource{
+						HostPath: &corev1.HostPathVolumeSource{
+							Path: "/var/run",
+						},
+					},
+				},
 			},
 			RestartPolicy: "Never",
 		},
@@ -93,6 +111,7 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 	return newPod.Name, nil
 }
 
+// GetLogs streams logs from the build pod when it is deployed
 func GetLogs(clientset *kubernetes.Clientset,
 	podName string, stream pb.Kci_BuildServer) error {
 
@@ -143,9 +162,11 @@ func GetLogs(clientset *kubernetes.Clientset,
 		pod, err := clientset.CoreV1().Pods(kciNamespace).Get(
 			podName, metav1.GetOptions{})
 
-		if pod.Status.InitContainerStatuses[currentStep-1].
-			State.Terminated.Reason == "Error" {
-			return fmt.Errorf("Build failed")
+		if pod.Status.InitContainerStatuses[currentStep-1].State.Terminated != nil {
+			if pod.Status.InitContainerStatuses[currentStep-1].
+				State.Terminated.Reason == "Error" {
+				return fmt.Errorf("Build failed")
+			}
 		}
 
 		currentStep++
