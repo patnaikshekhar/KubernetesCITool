@@ -13,11 +13,21 @@ func main() {
 	args := flag.Args()
 
 	if args[0] == "config" {
-		// Example kci config url https://ci.shekharpatnaik.com
 		if len(args) >= 3 {
 			config.AddConfig(args[1], args[2])
 		} else {
 			fmt.Println("You must pass a key and value with config")
+		}
+	} else if args[0] == "secret" {
+		if len(args) >= 2 {
+			if len(args) >= 3 {
+				actions.AddSecret(args[1], args[2])
+			} else {
+				actions.AddSecret(args[1], "")
+			}
+		} else {
+			fmt.Println(
+				"You must either provide a file name or a key-value pair")
 		}
 	} else {
 		// Example kci build.yaml

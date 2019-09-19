@@ -3,6 +3,7 @@ package kci;
 
 service Kci {
     rpc build (BuildRequest) returns (stream BuildResponse);
+    rpc addSecret (AddSecretRequest) returns (GenericStatus);
 }
 
 message BuildRequest {
@@ -20,4 +21,13 @@ message BuildResponse {
     string status = 1;
     int32 step = 2;
     string data = 3;
+}
+
+message AddSecretRequest {
+    string key = 1;
+    string value = 2;
+}
+
+message GenericStatus {
+    string status = 1;
 }

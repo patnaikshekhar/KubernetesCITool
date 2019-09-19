@@ -44,14 +44,12 @@ KCI_IP=$(kubectl get svc kci-server -n kci -o jsonpath="{.status.loadBalancer.in
 Now you can run a build by running
 
 ```sh
-./kci build ./examples/build.yaml
+./kci build ./examples/simple.yaml
 ```
 
 ## Coming Soon
-- Pod Identity Support
 - Docker Build / Push Support
-- Environment Variable Support
-- Secret support
+- Pod Identity Support
 - Push Triggers
 - Private GitHub Repo support
 - Secure gRPC connection support

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -54,4 +55,18 @@ func (s kciServer) Build(request *pb.BuildRequest, stream pb.Kci_BuildServer) er
 	}
 
 	return nil
+}
+
+func (s kciServer) AddSecret(ctx context.Context,
+	request *pb.AddSecretRequest) (*pb.GenericStatus, error) {
+
+	err := kube.CreateSecret(s.clientset, request.Key, request.Value)
+	if err != nil {
+		log.Printf("Error with request : %s", err.Error())
+		return nil, err
+	}
+
+	return &pb.GenericStatus{
+		Status: "Success",
+	}, nil
 }
