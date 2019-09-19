@@ -62,6 +62,19 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			)
 		}
 
+		// Add Environment Variables
+		if len(step.Env) > 0 {
+			log.Printf("Adding environment vars")
+			for k, v := range step.Env {
+				env := corev1.EnvVar{
+					Name:  k,
+					Value: v,
+				}
+
+				buildStep.Env = append(buildStep.Env, env)
+			}
+		}
+
 		containers = append(containers, buildStep)
 	}
 
