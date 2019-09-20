@@ -48,8 +48,7 @@ Now you can run a build by running
 ```
 
 ## Coming Soon
-- Docker Build / Push Support
+- Private GitHub Repo support
 - Pod Identity Support
 - Push Triggers
-- Private GitHub Repo support
 - Secure gRPC connection support

@@ -10,6 +10,7 @@ import (
 
 	pb "github.com/patnaikshekhar/kubernetescitool/interface"
 	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -31,6 +32,10 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			MountPath: "/workspace",
 			Name:      "main",
 		},
+		corev1.VolumeMount{
+			MountPath: "/root",
+			Name:      "home",
+		},
 	}
 
 	// Add first container to clone repo
@@ -50,6 +55,15 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			Args:         step.Args,
 			VolumeMounts: mounts,
 			WorkingDir:   "/workspace",
+			EnvFrom: []corev1.EnvFromSource{
+				corev1.EnvFromSource{
+					SecretRef: &v1.SecretEnvSource{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: kciSecretName,
+						},
+					},
+				},
+			},
 		}
 
 		if step.Image == "docker" {
@@ -75,6 +89,25 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			}
 		}
 
+		// Add Secrets
+		// if len(step.Secret) > 0 {
+		// 	for k, v := range step.Secret {
+		// 		env := corev1.EnvVar{
+		// 			Name: k,
+		// 			ValueFrom: &corev1.EnvVarSource{
+		// 				SecretKeyRef: &corev1.SecretKeySelector{
+		// 					Key: v,
+		// 					LocalObjectReference: corev1.LocalObjectReference{
+		// 						Name: kciSecretName,
+		// 					},
+		// 				},
+		// 			},
+		// 		}
+
+		// 		buildStep.Env = append(buildStep.Env, env)
+		// 	}
+		// }
+
 		containers = append(containers, buildStep)
 	}
 
@@ -97,6 +130,12 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			Volumes: []corev1.Volume{
 				corev1.Volume{
 					Name: "main",
+					VolumeSource: corev1.VolumeSource{
+						EmptyDir: &corev1.EmptyDirVolumeSource{},
+					},
+				},
+				corev1.Volume{
+					Name: "home",
 					VolumeSource: corev1.VolumeSource{
 						EmptyDir: &corev1.EmptyDirVolumeSource{},
 					},

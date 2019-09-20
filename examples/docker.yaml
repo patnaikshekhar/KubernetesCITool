@@ -4,9 +4,9 @@ steps:
   args: ["go", "test"]
 - image: golang:1.13.0-alpine3.10
   args: ["go", "build", "-o", "app"]
-- image: microsoft/azure-cli
-  args: ["az", "login", "--identity"]
 - image: docker
-  args: ["build", "-t", "shekharacrtest.azurecr.io/randomimage:1", "."]
+  args: ["docker", "login", "-u", "$(DOCKER_USERNAME)", "-p", "$(DOCKER_PASSWORD)"]
 - image: docker
-  args: ["push", "shekharacrtest.azurecr.io/randomimage:1"]
+  args: ["build", "-t", "patnaikshekhar/randomimage:1", "."]
+- image: docker
+  args: ["push", "patnaikshekhar/randomimage:1"]
