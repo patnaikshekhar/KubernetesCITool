@@ -89,25 +89,6 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			}
 		}
 
-		// Add Secrets
-		// if len(step.Secret) > 0 {
-		// 	for k, v := range step.Secret {
-		// 		env := corev1.EnvVar{
-		// 			Name: k,
-		// 			ValueFrom: &corev1.EnvVarSource{
-		// 				SecretKeyRef: &corev1.SecretKeySelector{
-		// 					Key: v,
-		// 					LocalObjectReference: corev1.LocalObjectReference{
-		// 						Name: kciSecretName,
-		// 					},
-		// 				},
-		// 			},
-		// 		}
-
-		// 		buildStep.Env = append(buildStep.Env, env)
-		// 	}
-		// }
-
 		containers = append(containers, buildStep)
 	}
 
@@ -151,6 +132,29 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 			},
 			RestartPolicy: "Never",
 		},
+	}
+
+	// Add SSH key to first container if present
+	if request.RepositorySSHKeySecret != "" {
+		containers[0].VolumeMounts = append(containers[0].VolumeMounts,
+			corev1.VolumeMount{
+				MountPath: "/root/.ssh",
+				Name:      "sshkeys",
+			})
+		pod.Spec.Volumes = append(pod.Spec.Volumes, corev1.Volume{
+			Name: "sshkeys",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: kciSecretName,
+					Items: []corev1.KeyToPath{
+						corev1.KeyToPath{
+							Key:  request.RepositorySSHKeySecret,
+							Path: "id_rsa",
+						},
+					},
+				},
+			},
+		})
 	}
 
 	newPod, err := clientset.CoreV1().Pods(kciNamespace).Create(pod)

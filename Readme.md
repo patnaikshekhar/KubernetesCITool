@@ -52,3 +52,4 @@ Now you can run a build by running
 - Pod Identity Support
 - Push Triggers
 - Secure gRPC connection support
+- User login / namespacing

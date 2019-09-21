@@ -1,0 +1,7 @@
+repository: git@github.com:patnaikshekhar/KubernetesCIPrivateExample.git
+repositorySSHKeySecret: private.key 
+steps:
+- image: alpine
+  args:
+    - echo
+    - Hello
