@@ -135,7 +135,7 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 	}
 
 	// Add SSH key to first container if present
-	if request.RepositorySSHKeySecret != "" {
+	if request.Sshkey != "" {
 		containers[0].VolumeMounts = append(containers[0].VolumeMounts,
 			corev1.VolumeMount{
 				MountPath: "/root/.ssh",
@@ -148,7 +148,7 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 					SecretName: kciSecretName,
 					Items: []corev1.KeyToPath{
 						corev1.KeyToPath{
-							Key:  request.RepositorySSHKeySecret,
+							Key:  request.Sshkey,
 							Path: "id_rsa",
 						},
 					},

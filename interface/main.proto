@@ -8,8 +8,8 @@ service Kci {
 
 message BuildRequest {
     string repository = 1;
-    repeated Step steps = 2;
-    string repositorySSHKeySecret = 3;
+    string sshkey = 2;
+    repeated Step steps = 3;
 }
 
 message Step {
