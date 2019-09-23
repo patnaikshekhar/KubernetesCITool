@@ -25,7 +25,7 @@ func Build(filename string) {
 	// Convert Contents to format
 	var request pb.BuildRequest
 	err = yaml.UnmarshalStrict(contents, &request)
-	log.Printf("Here in client %+v contents = %s", request, contents)
+
 	if err != nil {
 		log.Fatalf("Could not parse file %s", err.Error())
 	}

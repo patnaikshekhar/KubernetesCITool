@@ -1,6 +1,9 @@
 kci
 kci-server
 tmp
+
+
 private.key
 private.key.pub
 random_test.yaml
+known_hosts

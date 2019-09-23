@@ -1,7 +1,8 @@
 repository: git@github.com:patnaikshekhar/KubernetesCIPrivateExample.git
 sshkey: private.key
+knownhosts: known_hosts
 steps:
 - image: alpine
   args:
-    - echo
-    - Hello
+    - cat
+    - Readme.md

@@ -135,12 +135,16 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 	}
 
 	// Add SSH key to first container if present
-	if request.Sshkey != "" {
+	if request.Sshkey != "" && request.Knownhosts != "" {
+
+		mode := int32(0500)
+
 		containers[0].VolumeMounts = append(containers[0].VolumeMounts,
 			corev1.VolumeMount{
 				MountPath: "/root/.ssh",
 				Name:      "sshkeys",
 			})
+
 		pod.Spec.Volumes = append(pod.Spec.Volumes, corev1.Volume{
 			Name: "sshkeys",
 			VolumeSource: corev1.VolumeSource{
@@ -150,6 +154,11 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 						corev1.KeyToPath{
 							Key:  request.Sshkey,
 							Path: "id_rsa",
+							Mode: &mode,
+						},
+						corev1.KeyToPath{
+							Key:  request.Knownhosts,
+							Path: "known_hosts",
 						},
 					},
 				},

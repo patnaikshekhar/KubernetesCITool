@@ -9,7 +9,8 @@ service Kci {
 message BuildRequest {
     string repository = 1;
     string sshkey = 2;
-    repeated Step steps = 3;
+    string knownhosts = 3;
+    repeated Step steps = 4;
 }
 
 message Step {
