@@ -48,8 +48,7 @@ Now you can run a build by running
 ```
 
 ## Coming Soon
-- Private GitHub Repo support
-- Pod Identity Support
+- Pod Identity Support - In Progress
 - Push Triggers
 - Secure gRPC connection support
 - User login / namespacing

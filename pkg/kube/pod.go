@@ -166,6 +166,11 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 		})
 	}
 
+	// Add Pod Identity
+	if request.Identity != "" {
+		pod.ObjectMeta.Labels["aadpodidbinding"] = request.Identity
+	}
+
 	newPod, err := clientset.CoreV1().Pods(kciNamespace).Create(pod)
 	if err != nil {
 		return "", err

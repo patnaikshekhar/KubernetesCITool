@@ -10,7 +10,8 @@ message BuildRequest {
     string repository = 1;
     string sshkey = 2;
     string knownhosts = 3;
-    repeated Step steps = 4;
+    string identity = 4;
+    repeated Step steps = 5;
 }
 
 message Step {
