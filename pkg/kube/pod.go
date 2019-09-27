@@ -168,6 +168,9 @@ func CreatePod(clientset *kubernetes.Clientset, request *pb.BuildRequest) (
 
 	// Add Pod Identity
 	if request.Identity != "" {
+		if pod.ObjectMeta.Labels == nil {
+			pod.ObjectMeta.Labels = make(map[string]string)
+		}
 		pod.ObjectMeta.Labels["aadpodidbinding"] = request.Identity
 	}
 

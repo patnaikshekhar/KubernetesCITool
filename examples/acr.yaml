@@ -1,5 +1,5 @@
 repository: https://github.com/patnaikshekhar/KubernetesCIToolExample
-identity: kciidentity
+identity: kcibuildpod
 steps:
 - image: golang:1.13.0-alpine3.10
   args: ["go", "test"]

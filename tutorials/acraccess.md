@@ -22,7 +22,9 @@ export CLIENT_ID=$(az identity create -g kciacr -n kcibuild -o tsv --query="clie
 We will also create our ACR Instance
 
 ```sh
+export ACR_NAME=<unique acr name>
 
+az acr create -n $ACR_NAME -g kciacr --sku basic -l eastus
 ```
 
 Next we will create the Azure Identity resource
@@ -52,4 +54,13 @@ spec:
   AzureIdentity: kci-az-identity
   Selector: kcibuildpod
 EOF
+```
+
+We now need to set permissions for MIC. The MIC uses the service principal credentials stored in the cluster to access Azure resources. This service principal needs Microsoft.ManagedIdentity/userAssignedIdentities/\*/assign/action permission on the identity to work with user-assigned MSI.
+
+Lets get the service principal ID first
+
+```sh
+export SP_ID=$(az aks show -n <Your AKS Cluster Name> -g <Your AKS Cluster Group> \
+  --query=servicePrincipalProfile.clientId -o tsv)
 ```
