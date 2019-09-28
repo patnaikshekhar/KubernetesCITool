@@ -50,6 +50,7 @@ apiVersion: "aadpodidentity.k8s.io/v1"
 kind: AzureIdentityBinding
 metadata:
   name: kci-azure-identity-binding
+  namespace: kci
 spec:
   AzureIdentity: kci-az-identity
   Selector: kcibuildpod
@@ -63,4 +64,12 @@ Lets get the service principal ID first
 ```sh
 export SP_ID=$(az aks show -n <Your AKS Cluster Name> -g <Your AKS Cluster Group> \
   --query=servicePrincipalProfile.clientId -o tsv)
+```
+
+Now lets create the role assignment
+
+```sh
+az role assignment create --role "Managed Identity Operator" \
+  --assignee $SP_ID \
+  --scope /subscriptions/${SUBSCRIPTION_ID}/resourcegroups/kciacr/providers/Microsoft.ManagedIdentity/userAssignedIdentities/kcibuild
 ```
