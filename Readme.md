@@ -28,7 +28,7 @@ KCI can be installed in your organization by running
 
 git clone https://github.com/patnaikshekhar/KubernetesCITool
 
-kubectl apply -f k8s/
+kubectl apply -f k8s/kci-server.yaml
 ```
 
 You then need to download the CLI from ???

@@ -9,6 +9,7 @@ import (
 	pb "github.com/patnaikshekhar/kubernetescitool/interface"
 	"github.com/patnaikshekhar/kubernetescitool/pkg/kube"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -26,7 +27,16 @@ func Start(port int, kubeconfig string) {
 		log.Fatalf("Could not connect to kubernetes %s", err.Error())
 	}
 
-	grpcServer := grpc.NewServer()
+	var grpcServer *grpc.Server
+
+	creds, err := credentials.NewServerTLSFromFile("./certs/server.crt", "./certs/server.key")
+	if err != nil {
+		log.Printf("Warning: Could not load certs")
+		grpcServer = grpc.NewServer()
+	} else {
+		grpcServer = grpc.NewServer(grpc.Creds(creds))
+	}
+
 	pb.RegisterKciServer(grpcServer, newKCIServer(clientset))
 
 	grpcServer.Serve(lis)
