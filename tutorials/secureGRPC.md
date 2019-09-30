@@ -33,3 +33,4 @@ Now we need to configure the client to expect the certificate
 kci config cert $(pwd)/server.crt
 ```
 
+We are now ready to invoke the KCI command line securely

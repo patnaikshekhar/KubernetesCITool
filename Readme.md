@@ -48,8 +48,6 @@ Now you can run a build by running
 ```
 
 ## Coming Soon
-- Secure gRPC connection support
-- Fix Kubernetes Manifests and Skaffold Support
 - Push Triggers
 - Pod Identity Support - In Progress
 - User login / namespacing

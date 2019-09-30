@@ -11,6 +11,12 @@ metadata:
   namespace: kci
 ---
 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kci-secret
+  namespace: kci
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -18,16 +24,16 @@ metadata:
   namespace: kci
 rules:
 - apiGroups: [""]
-  verbs: ["list", "get"]
-  resources: ["pods/logs", "pods", "secrets"]
+  verbs: ["list", "get", "create", "update"]
+  resources: ["pods/log", "pods", "secrets"]
+  
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  metadata:
-    name: kci-server-binding
-    namespace: kci
+  name: kci-server-binding
+  namespace: kci
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
@@ -56,10 +62,11 @@ spec:
       containers:
       - name: kci-server
         image: patnaikshekhar/kci-server:1
-        containerPort:
-        - port: 10000
+        ports:
+        - containerPort: 10000
           name: grpc
-      serviceAccountName: kci
+          protocol: TCP
+      serviceAccountName: kci-server
 ---
 
 apiVersion: v1
