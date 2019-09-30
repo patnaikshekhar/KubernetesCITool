@@ -8,7 +8,7 @@ Lets create certificates first.
 # Create Private Key
 openssl genrsa -out server.key 2048
 
-# Create Certificate
+# Create Certificate use the hostname of your server as the CN
 openssl req -new -x509 -sha256 -key server.key \
     -out server.crt -days 3650
 ```
@@ -30,6 +30,6 @@ kubectl apply -f k8s/kci-server-with-secrets.yaml
 Now we need to configure the client to expect the certificate
 
 ```sh
-./kci config cert $(pwd)/server.crt
+kci config cert $(pwd)/server.crt
 ```
 

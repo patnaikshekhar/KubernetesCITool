@@ -8,8 +8,6 @@ import (
 	"log"
 
 	pb "github.com/patnaikshekhar/kubernetescitool/interface"
-	"github.com/patnaikshekhar/kubernetescitool/pkg/config"
-	"google.golang.org/grpc"
 	"gopkg.in/yaml.v2"
 )
 
@@ -38,16 +36,7 @@ func Build(filename string) {
 
 func startBuild(request *pb.BuildRequest) error {
 
-	url, err := config.GetConfig("url")
-	if err != nil {
-		return err
-	}
-
-	if url == "" {
-		return fmt.Errorf("Could not find URL in config")
-	}
-
-	conn, err := grpc.Dial(url, grpc.WithInsecure())
+	conn, err := connect()
 	if err != nil {
 		return err
 	}

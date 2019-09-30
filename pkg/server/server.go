@@ -29,7 +29,8 @@ func Start(port int, kubeconfig string) {
 
 	var grpcServer *grpc.Server
 
-	creds, err := credentials.NewServerTLSFromFile("./certs/server.crt", "./certs/server.key")
+	creds, err := credentials.NewServerTLSFromFile(
+		"./certs/server.crt", "./certs/server.key")
 	if err != nil {
 		log.Printf("Warning: Could not load certs")
 		grpcServer = grpc.NewServer()
@@ -39,7 +40,10 @@ func Start(port int, kubeconfig string) {
 
 	pb.RegisterKciServer(grpcServer, newKCIServer(clientset))
 
-	grpcServer.Serve(lis)
+	err = grpcServer.Serve(lis)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func newKCIServer(clientset *kubernetes.Clientset) pb.KciServer {

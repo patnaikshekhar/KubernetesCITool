@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 
 	pb "github.com/patnaikshekhar/kubernetescitool/interface"
-	"github.com/patnaikshekhar/kubernetescitool/pkg/config"
-	"google.golang.org/grpc"
 )
 
 // AddSecret adds a secret to the server
@@ -34,7 +32,7 @@ func AddSecret(key string, value string) {
 
 	err := invokeSecretService(request)
 	if err != nil {
-		fmt.Printf("Error connecting to KCI Server %s", key)
+		fmt.Printf("Error connecting to KCI Server %s", err)
 		return
 	}
 
@@ -43,16 +41,7 @@ func AddSecret(key string, value string) {
 
 func invokeSecretService(request *pb.AddSecretRequest) error {
 
-	url, err := config.GetConfig("url")
-	if err != nil {
-		return err
-	}
-
-	if url == "" {
-		return fmt.Errorf("Could not find URL in config")
-	}
-
-	conn, err := grpc.Dial(url, grpc.WithInsecure())
+	conn, err := connect()
 	if err != nil {
 		return err
 	}
