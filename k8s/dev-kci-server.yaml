@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kci-server
+  namespace: kci
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kci-server
+  template:
+    metadata:
+      labels:
+        app: kci-server
+    spec:
+      containers:
+      - name: kci-server
+        image: patnaikshekhar/kci-server
+        ports:
+        - containerPort: 10000
+          name: grpc
+          protocol: TCP
+        volumeMounts:
+        - name: certs
+          mountPath: ./certs
+      serviceAccountName: kci-server
+      volumes:
+      - name: certs
+        secret:
+          secretName: kci-server-secret
