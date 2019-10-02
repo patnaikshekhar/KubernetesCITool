@@ -16,6 +16,9 @@ spec:
       containers:
       - name: kci-server
         image: patnaikshekhar/kci-server
+        env:
+        - name: PS_EXPECTED_HOSTNAME
+          value: kci.shekharpatnaik.com
         ports:
         - containerPort: 10000
           name: grpc
@@ -23,8 +26,23 @@ spec:
         volumeMounts:
         - name: certs
           mountPath: ./certs
+        - name: config
+          mountPath: /.kci
       serviceAccountName: kci-server
       volumes:
       - name: certs
         secret:
           secretName: kci-server-secret
+      - name: config
+        configMap:
+          name: kci-server
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kci-server
+  namespace: kci
+data:
+  config.yaml: |
+    url: localhost:10000
+    cert: /certs/server.crt

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-func connect() (*grpc.ClientConn, error) {
+func connect(hostname string) (*grpc.ClientConn, error) {
 	url, err := config.GetConfig("url")
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func connect() (*grpc.ClientConn, error) {
 	if cert == "" {
 		conn, err = grpc.Dial(url, grpc.WithInsecure())
 	} else {
-		creds, err := credentials.NewClientTLSFromFile(cert, "")
+		creds, err := credentials.NewClientTLSFromFile(cert, hostname)
 		if err != nil {
 			return nil, fmt.Errorf("could not load tls cert: %s", err)
 		}

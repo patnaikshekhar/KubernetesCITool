@@ -28,16 +28,16 @@ func Build(filename string) {
 		log.Fatalf("Could not parse file %s", err.Error())
 	}
 
-	if err := StartBuild(&request); err != nil {
+	if err := StartBuild(&request, ""); err != nil {
 		log.Fatalf("Error invoking server %s", err.Error())
 	}
 
 }
 
 // StartBuild starts a build by calling the gRPC interface
-func StartBuild(request *pb.BuildRequest) error {
+func StartBuild(request *pb.BuildRequest, hostname string) error {
 
-	conn, err := connect()
+	conn, err := connect(hostname)
 	if err != nil {
 		return err
 	}

@@ -48,6 +48,5 @@ Now you can run a build by running
 ```
 
 ## Coming Soon
-- Push Triggers
 - Pod Identity Support - In Progress
 - User login / namespacing

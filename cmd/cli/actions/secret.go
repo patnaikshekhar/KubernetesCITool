@@ -41,7 +41,7 @@ func AddSecret(key string, value string) {
 
 func invokeSecretService(request *pb.AddSecretRequest) error {
 
-	conn, err := connect()
+	conn, err := connect("")
 	if err != nil {
 		return err
 	}

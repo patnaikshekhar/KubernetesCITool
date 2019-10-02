@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 
+	"github.com/patnaikshekhar/kubernetescitool/cmd/cli/actions"
 	"github.com/patnaikshekhar/kubernetescitool/pkg/git"
 )
 
@@ -23,6 +25,8 @@ func StartPushServer(port int) {
 }
 
 func pushHandler(w http.ResponseWriter, r *http.Request) {
+	var pushServerExpectedHostname = os.Getenv("PS_EXPECTED_HOSTNAME")
+
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Push Server - Error reading request body %s", err.Error())
@@ -43,11 +47,20 @@ func pushHandler(w http.ResponseWriter, r *http.Request) {
 		// Get build.xml from the repository
 		buildInfo, err := git.GetBuildDefinitionFromRepo(&githubHookData)
 		if err != nil {
-			log.Printf("Push Server - Error getting build definition %+v", err)
+			log.Printf("Push Server - Error getting build definition %s", err.Error())
 			return
 		}
 
 		log.Printf("Push Server - Got build definition %+v", buildInfo)
+
+		// Start the build in the background
+		log.Println("Starting Build")
+		go func() {
+			err = actions.StartBuild(buildInfo, pushServerExpectedHostname)
+			if err != nil {
+				log.Fatalf("Error in build: %s", err.Error())
+			}
+		}()
 
 		w.Write([]byte("OK"))
 	} else {
