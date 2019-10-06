@@ -3,7 +3,7 @@
 KCI is a simple build tool that allows you to run builds in your Kubernetes
 cluster using a simple build file format.
 
-This is an example build file
+This is a sample build file
 
 ```yaml
 repository: https://github.com/patnaikshekhar/KubernetesCIToolExample
